@@ -1,0 +1,8 @@
+main:function integer()={
+	x:integer = 3;
+	y:integer = 4;
+	z:integer = 5;
+	w:integer = 6;
+	print ((x+y+w+z)/3)^(2^2);
+	return 0;
+}

@@ -1,0 +1,58 @@
+#define TOKEN_UNARY_NEGATION 257
+#define TOKEN_STRING 258
+#define TOKEN_INTEGER 259
+#define TOKEN_CHAR 260
+#define TOKEN_DO 261
+#define TOKEN_FALSE 262
+#define TOKEN_WHILE 263
+#define TOKEN_IF 264
+#define TOKEN_ELSE 265
+#define TOKEN_ARRAY 266
+#define TOKEN_BOOLEAN 267
+#define TOKEN_FOR 268
+#define TOKEN_FUNCTION 269
+#define TOKEN_PRINT 270
+#define TOKEN_RETURN 271
+#define TOKEN_STRING_LITERAL 272
+#define TOKEN_CHARACTER_LITERAL 273
+#define TOKEN_INTEGER_LITERAL 274
+#define TOKEN_TRUE 275
+#define TOKEN_VOID 276
+#define TOKEN_IDENTIFIER 277
+#define TOKEN_SCOLON 278
+#define TOKEN_GE 279
+#define TOKEN_LE 280
+#define TOKEN_GT 281
+#define TOKEN_LT 282
+#define TOKEN_OR 283
+#define TOKEN_AND 284
+#define TOKEN_NOT 285
+#define TOKEN_EQ 286
+#define TOKEN_NE 287
+#define TOKEN_INCREMENT 288
+#define TOKEN_DECREMENT 289
+#define TOKEN_ADD 290
+#define TOKEN_SUB 291
+#define TOKEN_MULT 292
+#define TOKEN_DIV 293
+#define TOKEN_NEG 294
+#define TOKEN_ASSIGN 295
+#define TOKEN_EXPONENTIATION 296
+#define TOKEN_MOD 297
+#define TOKEN_COLON 298
+#define TOKEN_COMMA 299
+#define TOKEN_OPPAR 300
+#define TOKEN_CLPAR 301
+#define TOKEN_OPBRAK 302
+#define TOKEN_CLBRAK 303
+#define TOKEN_OPBRACE 304
+#define TOKEN_CLBRACE 305
+typedef union {
+	struct decl *decl;
+	struct stmt *stmt;
+	struct expr *expr;
+	struct param_list *param_list;
+	struct type *type;
+	char *c;
+} YYSTYPE;
+extern YYSTYPE yylval;

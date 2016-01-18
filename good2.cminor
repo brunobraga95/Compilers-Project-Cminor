@@ -1,0 +1,9 @@
+main:function integer()={
+	x:integer = 0;
+	for(x = 0;x<100;x++){
+	    if(x%2 == 0)print x,"\n";
+	    else print "odd\n";	
+	}
+
+	return 0;
+}

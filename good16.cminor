@@ -1,0 +1,11 @@
+main:function integer()={
+	x:integer = 100;
+	print "only 100 is allowed";
+	j:integer;
+	for(j = 0;j<100;j++){
+		x--;
+		x++;
+		print x,"\n";
+	}
+
+}

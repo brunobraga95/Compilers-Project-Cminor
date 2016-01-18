@@ -1,0 +1,3256 @@
+   0  $accept : program $end
+
+   1  program : decl_list
+
+   2  decl_list : decl decl_list
+   3            |
+
+   4  decl : ident TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SCOLON
+   5       | ident TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN expr TOKEN_SCOLON
+   6       | ident TOKEN_COLON type TOKEN_SCOLON
+   7       | ident TOKEN_COLON type TOKEN_ASSIGN TOKEN_OPBRACE stmt_list TOKEN_CLBRACE
+
+   8  type : TOKEN_STRING
+   9       | TOKEN_INTEGER
+  10       | TOKEN_CHAR
+  11       | TOKEN_BOOLEAN
+  12       | TOKEN_ARRAY TOKEN_OPBRAK expr TOKEN_CLBRAK type
+  13       | TOKEN_FUNCTION type2 TOKEN_OPPAR param_list TOKEN_CLPAR
+  14       | TOKEN_VOID
+
+  15  type2 : TOKEN_STRING
+  16        | TOKEN_INTEGER
+  17        | TOKEN_CHAR
+  18        | TOKEN_BOOLEAN
+  19        | TOKEN_ARRAY TOKEN_OPBRAK op_expr TOKEN_CLBRAK type2
+  20        | TOKEN_FUNCTION type TOKEN_OPPAR param_list TOKEN_CLPAR
+  21        | TOKEN_VOID
+
+  22  param_list :
+  23             | not_empty_param_list
+
+  24  not_empty_param_list : ident TOKEN_COLON type2
+  25                       | param_list2
+
+  26  param_list2 : ident TOKEN_COLON type2 TOKEN_COMMA not_empty_param_list
+
+  27  expr_list :
+  28            | expr_list2
+
+  29  expr_list_array : expr_list2
+
+  30  expr_list2 : expr TOKEN_COMMA expr_list2
+  31             | expr
+
+  32  ident : TOKEN_IDENTIFIER
+
+  33  stmt : decl
+  34       | expr TOKEN_SCOLON
+  35       | TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt
+  36       | TOKEN_OPBRACE stmt_list TOKEN_CLBRACE
+  37       | TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE stmt
+  38       | TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR stmt
+  39       | TOKEN_RETURN op_expr TOKEN_SCOLON
+  40       | TOKEN_PRINT expr_list TOKEN_SCOLON
+
+  41  match_stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE match_stmt
+  42             | TOKEN_RETURN op_expr TOKEN_SCOLON
+  43             | TOKEN_PRINT expr_list TOKEN_SCOLON
+  44             | TOKEN_OPBRACE stmt_list TOKEN_CLBRACE
+  45             | expr TOKEN_SCOLON
+  46             | decl
+  47             | TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR match_stmt
+
+  48  stmt_list :
+  49            | not_empty_stmt_list
+
+  50  not_empty_stmt_list : stmt
+  51                      | stmt_list2
+
+  52  stmt_list2 : stmt not_empty_stmt_list
+
+  53  op_expr :
+  54          | expr
+
+  55  expr : or_expr
+  56       | expr TOKEN_ASSIGN or_expr
+
+  57  or_expr : or_expr TOKEN_OR and_expr
+  58          | and_expr
+
+  59  and_expr : and_expr TOKEN_AND compare_expr
+  60           | compare_expr
+
+  61  compare_expr : compare_expr TOKEN_GE add_expr
+  62               | compare_expr TOKEN_GT add_expr
+  63               | compare_expr TOKEN_LE add_expr
+  64               | compare_expr TOKEN_LT add_expr
+  65               | compare_expr TOKEN_NE add_expr
+  66               | compare_expr TOKEN_EQ add_expr
+  67               | add_expr
+
+  68  add_expr : add_expr TOKEN_ADD mult_expr
+  69           | add_expr TOKEN_SUB mult_expr
+  70           | mult_expr
+
+  71  mult_expr : mult_expr TOKEN_MULT expo_expr
+  72            | mult_expr TOKEN_DIV expo_expr
+  73            | mult_expr TOKEN_MOD expo_expr
+  74            | expo_expr
+
+  75  expo_expr : expo_expr TOKEN_EXPONENTIATION unary_expr
+  76            | unary_expr
+
+  77  unary_expr : TOKEN_NOT inc_expr
+  78             | TOKEN_SUB inc_expr
+  79             | inc_expr
+
+  80  inc_expr : paren TOKEN_INCREMENT
+  81           | paren TOKEN_DECREMENT
+  82           | paren
+
+  83  paren : primary_expr
+  84        | TOKEN_OPPAR expr TOKEN_CLPAR
+
+  85  primary_expr : ident
+  86               | ident TOKEN_OPBRAK expr TOKEN_CLBRAK array_elements
+  87               | ident TOKEN_OPPAR expr_list TOKEN_CLPAR
+  88               | TOKEN_INTEGER_LITERAL
+  89               | TOKEN_STRING_LITERAL
+  90               | TOKEN_CHARACTER_LITERAL
+  91               | TOKEN_TRUE
+  92               | TOKEN_FALSE
+  93               | TOKEN_OPBRACE expr_list_array TOKEN_CLBRACE
+
+  94  array_elements : TOKEN_OPBRAK expr TOKEN_CLBRAK array_elements
+  95                 |
+
+state 0
+	$accept : . program $end  (0)
+	decl_list : .  (3)
+
+	TOKEN_IDENTIFIER  shift 1
+	$end  reduce 3
+
+	program  goto 2
+	decl_list  goto 3
+	decl  goto 4
+	ident  goto 5
+
+
+state 1
+	ident : TOKEN_IDENTIFIER .  (32)
+
+	.  reduce 32
+
+
+state 2
+	$accept : program . $end  (0)
+
+	$end  accept
+
+
+state 3
+	program : decl_list .  (1)
+
+	.  reduce 1
+
+
+state 4
+	decl_list : decl . decl_list  (2)
+	decl_list : .  (3)
+
+	TOKEN_IDENTIFIER  shift 1
+	$end  reduce 3
+
+	decl_list  goto 6
+	decl  goto 4
+	ident  goto 5
+
+
+state 5
+	decl : ident . TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SCOLON  (4)
+	decl : ident . TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN expr TOKEN_SCOLON  (5)
+	decl : ident . TOKEN_COLON type TOKEN_SCOLON  (6)
+	decl : ident . TOKEN_COLON type TOKEN_ASSIGN TOKEN_OPBRACE stmt_list TOKEN_CLBRACE  (7)
+
+	TOKEN_COLON  shift 7
+	.  error
+
+
+state 6
+	decl_list : decl decl_list .  (2)
+
+	.  reduce 2
+
+
+state 7
+	decl : ident TOKEN_COLON . type TOKEN_ASSIGN expr TOKEN_SCOLON  (4)
+	decl : ident TOKEN_COLON . TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN expr TOKEN_SCOLON  (5)
+	decl : ident TOKEN_COLON . type TOKEN_SCOLON  (6)
+	decl : ident TOKEN_COLON . type TOKEN_ASSIGN TOKEN_OPBRACE stmt_list TOKEN_CLBRACE  (7)
+
+	TOKEN_STRING  shift 8
+	TOKEN_INTEGER  shift 9
+	TOKEN_CHAR  shift 10
+	TOKEN_ARRAY  shift 11
+	TOKEN_BOOLEAN  shift 12
+	TOKEN_FUNCTION  shift 13
+	TOKEN_VOID  shift 14
+	.  error
+
+	type  goto 15
+
+
+state 8
+	type : TOKEN_STRING .  (8)
+
+	.  reduce 8
+
+
+state 9
+	type : TOKEN_INTEGER .  (9)
+
+	.  reduce 9
+
+
+state 10
+	type : TOKEN_CHAR .  (10)
+
+	.  reduce 10
+
+
+state 11
+	decl : ident TOKEN_COLON TOKEN_ARRAY . TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN expr TOKEN_SCOLON  (5)
+	type : TOKEN_ARRAY . TOKEN_OPBRAK expr TOKEN_CLBRAK type  (12)
+
+	TOKEN_OPBRAK  shift 16
+	.  error
+
+
+state 12
+	type : TOKEN_BOOLEAN .  (11)
+
+	.  reduce 11
+
+
+state 13
+	type : TOKEN_FUNCTION . type2 TOKEN_OPPAR param_list TOKEN_CLPAR  (13)
+
+	TOKEN_STRING  shift 17
+	TOKEN_INTEGER  shift 18
+	TOKEN_CHAR  shift 19
+	TOKEN_ARRAY  shift 20
+	TOKEN_BOOLEAN  shift 21
+	TOKEN_FUNCTION  shift 22
+	TOKEN_VOID  shift 23
+	.  error
+
+	type2  goto 24
+
+
+state 14
+	type : TOKEN_VOID .  (14)
+
+	.  reduce 14
+
+
+state 15
+	decl : ident TOKEN_COLON type . TOKEN_ASSIGN expr TOKEN_SCOLON  (4)
+	decl : ident TOKEN_COLON type . TOKEN_SCOLON  (6)
+	decl : ident TOKEN_COLON type . TOKEN_ASSIGN TOKEN_OPBRACE stmt_list TOKEN_CLBRACE  (7)
+
+	TOKEN_SCOLON  shift 25
+	TOKEN_ASSIGN  shift 26
+	.  error
+
+
+state 16
+	decl : ident TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK . TOKEN_CLBRAK type2 TOKEN_ASSIGN expr TOKEN_SCOLON  (5)
+	type : TOKEN_ARRAY TOKEN_OPBRAK . expr TOKEN_CLBRAK type  (12)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_CLBRAK  shift 35
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 44
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 17
+	type2 : TOKEN_STRING .  (15)
+
+	.  reduce 15
+
+
+state 18
+	type2 : TOKEN_INTEGER .  (16)
+
+	.  reduce 16
+
+
+state 19
+	type2 : TOKEN_CHAR .  (17)
+
+	.  reduce 17
+
+
+state 20
+	type2 : TOKEN_ARRAY . TOKEN_OPBRAK op_expr TOKEN_CLBRAK type2  (19)
+
+	TOKEN_OPBRAK  shift 49
+	.  error
+
+
+state 21
+	type2 : TOKEN_BOOLEAN .  (18)
+
+	.  reduce 18
+
+
+state 22
+	type2 : TOKEN_FUNCTION . type TOKEN_OPPAR param_list TOKEN_CLPAR  (20)
+
+	TOKEN_STRING  shift 8
+	TOKEN_INTEGER  shift 9
+	TOKEN_CHAR  shift 10
+	TOKEN_ARRAY  shift 50
+	TOKEN_BOOLEAN  shift 12
+	TOKEN_FUNCTION  shift 13
+	TOKEN_VOID  shift 14
+	.  error
+
+	type  goto 51
+
+
+state 23
+	type2 : TOKEN_VOID .  (21)
+
+	.  reduce 21
+
+
+state 24
+	type : TOKEN_FUNCTION type2 . TOKEN_OPPAR param_list TOKEN_CLPAR  (13)
+
+	TOKEN_OPPAR  shift 52
+	.  error
+
+
+state 25
+	decl : ident TOKEN_COLON type TOKEN_SCOLON .  (6)
+
+	.  reduce 6
+
+
+state 26
+	decl : ident TOKEN_COLON type TOKEN_ASSIGN . expr TOKEN_SCOLON  (4)
+	decl : ident TOKEN_COLON type TOKEN_ASSIGN . TOKEN_OPBRACE stmt_list TOKEN_CLBRACE  (7)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 53
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 54
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 27
+	primary_expr : TOKEN_FALSE .  (92)
+
+	.  reduce 92
+
+
+state 28
+	primary_expr : TOKEN_STRING_LITERAL .  (89)
+
+	.  reduce 89
+
+
+state 29
+	primary_expr : TOKEN_CHARACTER_LITERAL .  (90)
+
+	.  reduce 90
+
+
+state 30
+	primary_expr : TOKEN_INTEGER_LITERAL .  (88)
+
+	.  reduce 88
+
+
+state 31
+	primary_expr : TOKEN_TRUE .  (91)
+
+	.  reduce 91
+
+
+state 32
+	unary_expr : TOKEN_NOT . inc_expr  (77)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	primary_expr  goto 45
+	inc_expr  goto 55
+	ident  goto 48
+
+
+state 33
+	unary_expr : TOKEN_SUB . inc_expr  (78)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	primary_expr  goto 45
+	inc_expr  goto 56
+	ident  goto 48
+
+
+state 34
+	paren : TOKEN_OPPAR . expr TOKEN_CLPAR  (84)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 57
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 35
+	decl : ident TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK . type2 TOKEN_ASSIGN expr TOKEN_SCOLON  (5)
+
+	TOKEN_STRING  shift 17
+	TOKEN_INTEGER  shift 18
+	TOKEN_CHAR  shift 19
+	TOKEN_ARRAY  shift 20
+	TOKEN_BOOLEAN  shift 21
+	TOKEN_FUNCTION  shift 22
+	TOKEN_VOID  shift 23
+	.  error
+
+	type2  goto 58
+
+
+state 36
+	primary_expr : TOKEN_OPBRACE . expr_list_array TOKEN_CLBRACE  (93)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 59
+	primary_expr  goto 45
+	expr_list2  goto 60
+	expr_list_array  goto 61
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 37
+	inc_expr : paren . TOKEN_INCREMENT  (80)
+	inc_expr : paren . TOKEN_DECREMENT  (81)
+	inc_expr : paren .  (82)
+
+	TOKEN_INCREMENT  shift 62
+	TOKEN_DECREMENT  shift 63
+	TOKEN_SCOLON  reduce 82
+	TOKEN_GE  reduce 82
+	TOKEN_LE  reduce 82
+	TOKEN_GT  reduce 82
+	TOKEN_LT  reduce 82
+	TOKEN_OR  reduce 82
+	TOKEN_AND  reduce 82
+	TOKEN_EQ  reduce 82
+	TOKEN_NE  reduce 82
+	TOKEN_ADD  reduce 82
+	TOKEN_SUB  reduce 82
+	TOKEN_MULT  reduce 82
+	TOKEN_DIV  reduce 82
+	TOKEN_ASSIGN  reduce 82
+	TOKEN_EXPONENTIATION  reduce 82
+	TOKEN_MOD  reduce 82
+	TOKEN_COMMA  reduce 82
+	TOKEN_CLPAR  reduce 82
+	TOKEN_CLBRAK  reduce 82
+	TOKEN_CLBRACE  reduce 82
+
+
+state 38
+	or_expr : and_expr .  (58)
+	and_expr : and_expr . TOKEN_AND compare_expr  (59)
+
+	TOKEN_AND  shift 64
+	TOKEN_SCOLON  reduce 58
+	TOKEN_OR  reduce 58
+	TOKEN_ASSIGN  reduce 58
+	TOKEN_COMMA  reduce 58
+	TOKEN_CLPAR  reduce 58
+	TOKEN_CLBRAK  reduce 58
+	TOKEN_CLBRACE  reduce 58
+
+
+state 39
+	expr : or_expr .  (55)
+	or_expr : or_expr . TOKEN_OR and_expr  (57)
+
+	TOKEN_OR  shift 65
+	TOKEN_SCOLON  reduce 55
+	TOKEN_ASSIGN  reduce 55
+	TOKEN_COMMA  reduce 55
+	TOKEN_CLPAR  reduce 55
+	TOKEN_CLBRAK  reduce 55
+	TOKEN_CLBRACE  reduce 55
+
+
+state 40
+	expo_expr : unary_expr .  (76)
+
+	.  reduce 76
+
+
+state 41
+	mult_expr : expo_expr .  (74)
+	expo_expr : expo_expr . TOKEN_EXPONENTIATION unary_expr  (75)
+
+	TOKEN_EXPONENTIATION  shift 66
+	TOKEN_SCOLON  reduce 74
+	TOKEN_GE  reduce 74
+	TOKEN_LE  reduce 74
+	TOKEN_GT  reduce 74
+	TOKEN_LT  reduce 74
+	TOKEN_OR  reduce 74
+	TOKEN_AND  reduce 74
+	TOKEN_EQ  reduce 74
+	TOKEN_NE  reduce 74
+	TOKEN_ADD  reduce 74
+	TOKEN_SUB  reduce 74
+	TOKEN_MULT  reduce 74
+	TOKEN_DIV  reduce 74
+	TOKEN_ASSIGN  reduce 74
+	TOKEN_MOD  reduce 74
+	TOKEN_COMMA  reduce 74
+	TOKEN_CLPAR  reduce 74
+	TOKEN_CLBRAK  reduce 74
+	TOKEN_CLBRACE  reduce 74
+
+
+state 42
+	compare_expr : add_expr .  (67)
+	add_expr : add_expr . TOKEN_ADD mult_expr  (68)
+	add_expr : add_expr . TOKEN_SUB mult_expr  (69)
+
+	TOKEN_ADD  shift 67
+	TOKEN_SUB  shift 68
+	TOKEN_SCOLON  reduce 67
+	TOKEN_GE  reduce 67
+	TOKEN_LE  reduce 67
+	TOKEN_GT  reduce 67
+	TOKEN_LT  reduce 67
+	TOKEN_OR  reduce 67
+	TOKEN_AND  reduce 67
+	TOKEN_EQ  reduce 67
+	TOKEN_NE  reduce 67
+	TOKEN_ASSIGN  reduce 67
+	TOKEN_COMMA  reduce 67
+	TOKEN_CLPAR  reduce 67
+	TOKEN_CLBRAK  reduce 67
+	TOKEN_CLBRACE  reduce 67
+
+
+state 43
+	add_expr : mult_expr .  (70)
+	mult_expr : mult_expr . TOKEN_MULT expo_expr  (71)
+	mult_expr : mult_expr . TOKEN_DIV expo_expr  (72)
+	mult_expr : mult_expr . TOKEN_MOD expo_expr  (73)
+
+	TOKEN_MULT  shift 69
+	TOKEN_DIV  shift 70
+	TOKEN_MOD  shift 71
+	TOKEN_SCOLON  reduce 70
+	TOKEN_GE  reduce 70
+	TOKEN_LE  reduce 70
+	TOKEN_GT  reduce 70
+	TOKEN_LT  reduce 70
+	TOKEN_OR  reduce 70
+	TOKEN_AND  reduce 70
+	TOKEN_EQ  reduce 70
+	TOKEN_NE  reduce 70
+	TOKEN_ADD  reduce 70
+	TOKEN_SUB  reduce 70
+	TOKEN_ASSIGN  reduce 70
+	TOKEN_COMMA  reduce 70
+	TOKEN_CLPAR  reduce 70
+	TOKEN_CLBRAK  reduce 70
+	TOKEN_CLBRACE  reduce 70
+
+
+state 44
+	type : TOKEN_ARRAY TOKEN_OPBRAK expr . TOKEN_CLBRAK type  (12)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_CLBRAK  shift 73
+	.  error
+
+
+state 45
+	paren : primary_expr .  (83)
+
+	.  reduce 83
+
+
+state 46
+	and_expr : compare_expr .  (60)
+	compare_expr : compare_expr . TOKEN_GE add_expr  (61)
+	compare_expr : compare_expr . TOKEN_GT add_expr  (62)
+	compare_expr : compare_expr . TOKEN_LE add_expr  (63)
+	compare_expr : compare_expr . TOKEN_LT add_expr  (64)
+	compare_expr : compare_expr . TOKEN_NE add_expr  (65)
+	compare_expr : compare_expr . TOKEN_EQ add_expr  (66)
+
+	TOKEN_GE  shift 74
+	TOKEN_LE  shift 75
+	TOKEN_GT  shift 76
+	TOKEN_LT  shift 77
+	TOKEN_EQ  shift 78
+	TOKEN_NE  shift 79
+	TOKEN_SCOLON  reduce 60
+	TOKEN_OR  reduce 60
+	TOKEN_AND  reduce 60
+	TOKEN_ASSIGN  reduce 60
+	TOKEN_COMMA  reduce 60
+	TOKEN_CLPAR  reduce 60
+	TOKEN_CLBRAK  reduce 60
+	TOKEN_CLBRACE  reduce 60
+
+
+state 47
+	unary_expr : inc_expr .  (79)
+
+	.  reduce 79
+
+
+state 48
+	primary_expr : ident .  (85)
+	primary_expr : ident . TOKEN_OPBRAK expr TOKEN_CLBRAK array_elements  (86)
+	primary_expr : ident . TOKEN_OPPAR expr_list TOKEN_CLPAR  (87)
+
+	TOKEN_OPPAR  shift 80
+	TOKEN_OPBRAK  shift 81
+	TOKEN_SCOLON  reduce 85
+	TOKEN_GE  reduce 85
+	TOKEN_LE  reduce 85
+	TOKEN_GT  reduce 85
+	TOKEN_LT  reduce 85
+	TOKEN_OR  reduce 85
+	TOKEN_AND  reduce 85
+	TOKEN_EQ  reduce 85
+	TOKEN_NE  reduce 85
+	TOKEN_INCREMENT  reduce 85
+	TOKEN_DECREMENT  reduce 85
+	TOKEN_ADD  reduce 85
+	TOKEN_SUB  reduce 85
+	TOKEN_MULT  reduce 85
+	TOKEN_DIV  reduce 85
+	TOKEN_ASSIGN  reduce 85
+	TOKEN_EXPONENTIATION  reduce 85
+	TOKEN_MOD  reduce 85
+	TOKEN_COMMA  reduce 85
+	TOKEN_CLPAR  reduce 85
+	TOKEN_CLBRAK  reduce 85
+	TOKEN_CLBRACE  reduce 85
+
+
+state 49
+	type2 : TOKEN_ARRAY TOKEN_OPBRAK . op_expr TOKEN_CLBRAK type2  (19)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_CLBRAK  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 83
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 50
+	type : TOKEN_ARRAY . TOKEN_OPBRAK expr TOKEN_CLBRAK type  (12)
+
+	TOKEN_OPBRAK  shift 84
+	.  error
+
+
+state 51
+	type2 : TOKEN_FUNCTION type . TOKEN_OPPAR param_list TOKEN_CLPAR  (20)
+
+	TOKEN_OPPAR  shift 85
+	.  error
+
+
+state 52
+	type : TOKEN_FUNCTION type2 TOKEN_OPPAR . param_list TOKEN_CLPAR  (13)
+	param_list : .  (22)
+
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_CLPAR  reduce 22
+
+	param_list  goto 86
+	not_empty_param_list  goto 87
+	param_list2  goto 88
+	ident  goto 89
+
+
+state 53
+	decl : ident TOKEN_COLON type TOKEN_ASSIGN TOKEN_OPBRACE . stmt_list TOKEN_CLBRACE  (7)
+	primary_expr : TOKEN_OPBRACE . expr_list_array TOKEN_CLBRACE  (93)
+	stmt_list : .  (48)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 90
+	TOKEN_FOR  shift 91
+	TOKEN_PRINT  shift 92
+	TOKEN_RETURN  shift 93
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 94
+	TOKEN_CLBRACE  reduce 48
+
+	decl  goto 95
+	stmt  goto 96
+	stmt_list  goto 97
+	not_empty_stmt_list  goto 98
+	stmt_list2  goto 99
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 100
+	primary_expr  goto 45
+	expr_list2  goto 60
+	expr_list_array  goto 61
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 54
+	decl : ident TOKEN_COLON type TOKEN_ASSIGN expr . TOKEN_SCOLON  (4)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_SCOLON  shift 102
+	TOKEN_ASSIGN  shift 72
+	.  error
+
+
+state 55
+	unary_expr : TOKEN_NOT inc_expr .  (77)
+
+	.  reduce 77
+
+
+state 56
+	unary_expr : TOKEN_SUB inc_expr .  (78)
+
+	.  reduce 78
+
+
+state 57
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+	paren : TOKEN_OPPAR expr . TOKEN_CLPAR  (84)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_CLPAR  shift 103
+	.  error
+
+
+state 58
+	decl : ident TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 . TOKEN_ASSIGN expr TOKEN_SCOLON  (5)
+
+	TOKEN_ASSIGN  shift 104
+	.  error
+
+
+state 59
+	expr_list2 : expr . TOKEN_COMMA expr_list2  (30)
+	expr_list2 : expr .  (31)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_COMMA  shift 105
+	TOKEN_SCOLON  reduce 31
+	TOKEN_CLPAR  reduce 31
+	TOKEN_CLBRACE  reduce 31
+
+
+state 60
+	expr_list_array : expr_list2 .  (29)
+
+	.  reduce 29
+
+
+state 61
+	primary_expr : TOKEN_OPBRACE expr_list_array . TOKEN_CLBRACE  (93)
+
+	TOKEN_CLBRACE  shift 106
+	.  error
+
+
+state 62
+	inc_expr : paren TOKEN_INCREMENT .  (80)
+
+	.  reduce 80
+
+
+state 63
+	inc_expr : paren TOKEN_DECREMENT .  (81)
+
+	.  reduce 81
+
+
+state 64
+	and_expr : and_expr TOKEN_AND . compare_expr  (59)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	primary_expr  goto 45
+	compare_expr  goto 107
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 65
+	or_expr : or_expr TOKEN_OR . and_expr  (57)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 108
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 66
+	expo_expr : expo_expr TOKEN_EXPONENTIATION . unary_expr  (75)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 109
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 67
+	add_expr : add_expr TOKEN_ADD . mult_expr  (68)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	mult_expr  goto 110
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 68
+	add_expr : add_expr TOKEN_SUB . mult_expr  (69)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	mult_expr  goto 111
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 69
+	mult_expr : mult_expr TOKEN_MULT . expo_expr  (71)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 112
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 70
+	mult_expr : mult_expr TOKEN_DIV . expo_expr  (72)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 113
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 71
+	mult_expr : mult_expr TOKEN_MOD . expo_expr  (73)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 114
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 72
+	expr : expr TOKEN_ASSIGN . or_expr  (56)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 115
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 73
+	type : TOKEN_ARRAY TOKEN_OPBRAK expr TOKEN_CLBRAK . type  (12)
+
+	TOKEN_STRING  shift 8
+	TOKEN_INTEGER  shift 9
+	TOKEN_CHAR  shift 10
+	TOKEN_ARRAY  shift 50
+	TOKEN_BOOLEAN  shift 12
+	TOKEN_FUNCTION  shift 13
+	TOKEN_VOID  shift 14
+	.  error
+
+	type  goto 116
+
+
+state 74
+	compare_expr : compare_expr TOKEN_GE . add_expr  (61)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 117
+	mult_expr  goto 43
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 75
+	compare_expr : compare_expr TOKEN_LE . add_expr  (63)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 118
+	mult_expr  goto 43
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 76
+	compare_expr : compare_expr TOKEN_GT . add_expr  (62)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 119
+	mult_expr  goto 43
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 77
+	compare_expr : compare_expr TOKEN_LT . add_expr  (64)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 120
+	mult_expr  goto 43
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 78
+	compare_expr : compare_expr TOKEN_EQ . add_expr  (66)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 121
+	mult_expr  goto 43
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 79
+	compare_expr : compare_expr TOKEN_NE . add_expr  (65)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 122
+	mult_expr  goto 43
+	primary_expr  goto 45
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 80
+	primary_expr : ident TOKEN_OPPAR . expr_list TOKEN_CLPAR  (87)
+	expr_list : .  (27)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_CLPAR  reduce 27
+
+	expr_list  goto 123
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 59
+	primary_expr  goto 45
+	expr_list2  goto 124
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 81
+	primary_expr : ident TOKEN_OPBRAK . expr TOKEN_CLBRAK array_elements  (86)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 125
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 82
+	op_expr : expr .  (54)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_SCOLON  reduce 54
+	TOKEN_CLPAR  reduce 54
+	TOKEN_CLBRAK  reduce 54
+
+
+state 83
+	type2 : TOKEN_ARRAY TOKEN_OPBRAK op_expr . TOKEN_CLBRAK type2  (19)
+
+	TOKEN_CLBRAK  shift 126
+	.  error
+
+
+state 84
+	type : TOKEN_ARRAY TOKEN_OPBRAK . expr TOKEN_CLBRAK type  (12)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 44
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 85
+	type2 : TOKEN_FUNCTION type TOKEN_OPPAR . param_list TOKEN_CLPAR  (20)
+	param_list : .  (22)
+
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_CLPAR  reduce 22
+
+	param_list  goto 127
+	not_empty_param_list  goto 87
+	param_list2  goto 88
+	ident  goto 89
+
+
+state 86
+	type : TOKEN_FUNCTION type2 TOKEN_OPPAR param_list . TOKEN_CLPAR  (13)
+
+	TOKEN_CLPAR  shift 128
+	.  error
+
+
+state 87
+	param_list : not_empty_param_list .  (23)
+
+	.  reduce 23
+
+
+state 88
+	not_empty_param_list : param_list2 .  (25)
+
+	.  reduce 25
+
+
+state 89
+	not_empty_param_list : ident . TOKEN_COLON type2  (24)
+	param_list2 : ident . TOKEN_COLON type2 TOKEN_COMMA not_empty_param_list  (26)
+
+	TOKEN_COLON  shift 129
+	.  error
+
+
+state 90
+	stmt : TOKEN_IF . TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF . TOKEN_OPPAR expr TOKEN_CLPAR stmt  (38)
+
+	TOKEN_OPPAR  shift 130
+	.  error
+
+
+state 91
+	stmt : TOKEN_FOR . TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+
+	TOKEN_OPPAR  shift 131
+	.  error
+
+
+state 92
+	stmt : TOKEN_PRINT . expr_list TOKEN_SCOLON  (40)
+	expr_list : .  (27)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 27
+
+	expr_list  goto 132
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 59
+	primary_expr  goto 45
+	expr_list2  goto 124
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 93
+	stmt : TOKEN_RETURN . op_expr TOKEN_SCOLON  (39)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 133
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 94
+	stmt : TOKEN_OPBRACE . stmt_list TOKEN_CLBRACE  (36)
+	primary_expr : TOKEN_OPBRACE . expr_list_array TOKEN_CLBRACE  (93)
+	stmt_list : .  (48)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 90
+	TOKEN_FOR  shift 91
+	TOKEN_PRINT  shift 92
+	TOKEN_RETURN  shift 93
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 94
+	TOKEN_CLBRACE  reduce 48
+
+	decl  goto 95
+	stmt  goto 96
+	stmt_list  goto 134
+	not_empty_stmt_list  goto 98
+	stmt_list2  goto 99
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 100
+	primary_expr  goto 45
+	expr_list2  goto 60
+	expr_list_array  goto 61
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 95
+	stmt : decl .  (33)
+
+	.  reduce 33
+
+
+state 96
+	not_empty_stmt_list : stmt .  (50)
+	stmt_list2 : stmt . not_empty_stmt_list  (52)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 90
+	TOKEN_FOR  shift 91
+	TOKEN_PRINT  shift 92
+	TOKEN_RETURN  shift 93
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 94
+	TOKEN_CLBRACE  reduce 50
+
+	decl  goto 95
+	stmt  goto 96
+	not_empty_stmt_list  goto 135
+	stmt_list2  goto 99
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 136
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 97
+	decl : ident TOKEN_COLON type TOKEN_ASSIGN TOKEN_OPBRACE stmt_list . TOKEN_CLBRACE  (7)
+
+	TOKEN_CLBRACE  shift 137
+	.  error
+
+
+state 98
+	stmt_list : not_empty_stmt_list .  (49)
+
+	.  reduce 49
+
+
+state 99
+	not_empty_stmt_list : stmt_list2 .  (51)
+
+	.  reduce 51
+
+
+state 100
+	expr_list2 : expr . TOKEN_COMMA expr_list2  (30)
+	expr_list2 : expr .  (31)
+	stmt : expr . TOKEN_SCOLON  (34)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_SCOLON  shift 138
+	TOKEN_ASSIGN  shift 72
+	TOKEN_COMMA  shift 105
+	TOKEN_CLBRACE  reduce 31
+
+
+state 101
+	decl : ident . TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SCOLON  (4)
+	decl : ident . TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN expr TOKEN_SCOLON  (5)
+	decl : ident . TOKEN_COLON type TOKEN_SCOLON  (6)
+	decl : ident . TOKEN_COLON type TOKEN_ASSIGN TOKEN_OPBRACE stmt_list TOKEN_CLBRACE  (7)
+	primary_expr : ident .  (85)
+	primary_expr : ident . TOKEN_OPBRAK expr TOKEN_CLBRAK array_elements  (86)
+	primary_expr : ident . TOKEN_OPPAR expr_list TOKEN_CLPAR  (87)
+
+	TOKEN_COLON  shift 7
+	TOKEN_OPPAR  shift 80
+	TOKEN_OPBRAK  shift 81
+	TOKEN_SCOLON  reduce 85
+	TOKEN_GE  reduce 85
+	TOKEN_LE  reduce 85
+	TOKEN_GT  reduce 85
+	TOKEN_LT  reduce 85
+	TOKEN_OR  reduce 85
+	TOKEN_AND  reduce 85
+	TOKEN_EQ  reduce 85
+	TOKEN_NE  reduce 85
+	TOKEN_INCREMENT  reduce 85
+	TOKEN_DECREMENT  reduce 85
+	TOKEN_ADD  reduce 85
+	TOKEN_SUB  reduce 85
+	TOKEN_MULT  reduce 85
+	TOKEN_DIV  reduce 85
+	TOKEN_ASSIGN  reduce 85
+	TOKEN_EXPONENTIATION  reduce 85
+	TOKEN_MOD  reduce 85
+	TOKEN_COMMA  reduce 85
+	TOKEN_CLBRACE  reduce 85
+
+
+state 102
+	decl : ident TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SCOLON .  (4)
+
+	.  reduce 4
+
+
+state 103
+	paren : TOKEN_OPPAR expr TOKEN_CLPAR .  (84)
+
+	.  reduce 84
+
+
+state 104
+	decl : ident TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN . expr TOKEN_SCOLON  (5)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 139
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 105
+	expr_list2 : expr TOKEN_COMMA . expr_list2  (30)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 59
+	primary_expr  goto 45
+	expr_list2  goto 140
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 106
+	primary_expr : TOKEN_OPBRACE expr_list_array TOKEN_CLBRACE .  (93)
+
+	.  reduce 93
+
+
+state 107
+	and_expr : and_expr TOKEN_AND compare_expr .  (59)
+	compare_expr : compare_expr . TOKEN_GE add_expr  (61)
+	compare_expr : compare_expr . TOKEN_GT add_expr  (62)
+	compare_expr : compare_expr . TOKEN_LE add_expr  (63)
+	compare_expr : compare_expr . TOKEN_LT add_expr  (64)
+	compare_expr : compare_expr . TOKEN_NE add_expr  (65)
+	compare_expr : compare_expr . TOKEN_EQ add_expr  (66)
+
+	TOKEN_GE  shift 74
+	TOKEN_LE  shift 75
+	TOKEN_GT  shift 76
+	TOKEN_LT  shift 77
+	TOKEN_EQ  shift 78
+	TOKEN_NE  shift 79
+	TOKEN_SCOLON  reduce 59
+	TOKEN_OR  reduce 59
+	TOKEN_AND  reduce 59
+	TOKEN_ASSIGN  reduce 59
+	TOKEN_COMMA  reduce 59
+	TOKEN_CLPAR  reduce 59
+	TOKEN_CLBRAK  reduce 59
+	TOKEN_CLBRACE  reduce 59
+
+
+state 108
+	or_expr : or_expr TOKEN_OR and_expr .  (57)
+	and_expr : and_expr . TOKEN_AND compare_expr  (59)
+
+	TOKEN_AND  shift 64
+	TOKEN_SCOLON  reduce 57
+	TOKEN_OR  reduce 57
+	TOKEN_ASSIGN  reduce 57
+	TOKEN_COMMA  reduce 57
+	TOKEN_CLPAR  reduce 57
+	TOKEN_CLBRAK  reduce 57
+	TOKEN_CLBRACE  reduce 57
+
+
+state 109
+	expo_expr : expo_expr TOKEN_EXPONENTIATION unary_expr .  (75)
+
+	.  reduce 75
+
+
+state 110
+	add_expr : add_expr TOKEN_ADD mult_expr .  (68)
+	mult_expr : mult_expr . TOKEN_MULT expo_expr  (71)
+	mult_expr : mult_expr . TOKEN_DIV expo_expr  (72)
+	mult_expr : mult_expr . TOKEN_MOD expo_expr  (73)
+
+	TOKEN_MULT  shift 69
+	TOKEN_DIV  shift 70
+	TOKEN_MOD  shift 71
+	TOKEN_SCOLON  reduce 68
+	TOKEN_GE  reduce 68
+	TOKEN_LE  reduce 68
+	TOKEN_GT  reduce 68
+	TOKEN_LT  reduce 68
+	TOKEN_OR  reduce 68
+	TOKEN_AND  reduce 68
+	TOKEN_EQ  reduce 68
+	TOKEN_NE  reduce 68
+	TOKEN_ADD  reduce 68
+	TOKEN_SUB  reduce 68
+	TOKEN_ASSIGN  reduce 68
+	TOKEN_COMMA  reduce 68
+	TOKEN_CLPAR  reduce 68
+	TOKEN_CLBRAK  reduce 68
+	TOKEN_CLBRACE  reduce 68
+
+
+state 111
+	add_expr : add_expr TOKEN_SUB mult_expr .  (69)
+	mult_expr : mult_expr . TOKEN_MULT expo_expr  (71)
+	mult_expr : mult_expr . TOKEN_DIV expo_expr  (72)
+	mult_expr : mult_expr . TOKEN_MOD expo_expr  (73)
+
+	TOKEN_MULT  shift 69
+	TOKEN_DIV  shift 70
+	TOKEN_MOD  shift 71
+	TOKEN_SCOLON  reduce 69
+	TOKEN_GE  reduce 69
+	TOKEN_LE  reduce 69
+	TOKEN_GT  reduce 69
+	TOKEN_LT  reduce 69
+	TOKEN_OR  reduce 69
+	TOKEN_AND  reduce 69
+	TOKEN_EQ  reduce 69
+	TOKEN_NE  reduce 69
+	TOKEN_ADD  reduce 69
+	TOKEN_SUB  reduce 69
+	TOKEN_ASSIGN  reduce 69
+	TOKEN_COMMA  reduce 69
+	TOKEN_CLPAR  reduce 69
+	TOKEN_CLBRAK  reduce 69
+	TOKEN_CLBRACE  reduce 69
+
+
+state 112
+	mult_expr : mult_expr TOKEN_MULT expo_expr .  (71)
+	expo_expr : expo_expr . TOKEN_EXPONENTIATION unary_expr  (75)
+
+	TOKEN_EXPONENTIATION  shift 66
+	TOKEN_SCOLON  reduce 71
+	TOKEN_GE  reduce 71
+	TOKEN_LE  reduce 71
+	TOKEN_GT  reduce 71
+	TOKEN_LT  reduce 71
+	TOKEN_OR  reduce 71
+	TOKEN_AND  reduce 71
+	TOKEN_EQ  reduce 71
+	TOKEN_NE  reduce 71
+	TOKEN_ADD  reduce 71
+	TOKEN_SUB  reduce 71
+	TOKEN_MULT  reduce 71
+	TOKEN_DIV  reduce 71
+	TOKEN_ASSIGN  reduce 71
+	TOKEN_MOD  reduce 71
+	TOKEN_COMMA  reduce 71
+	TOKEN_CLPAR  reduce 71
+	TOKEN_CLBRAK  reduce 71
+	TOKEN_CLBRACE  reduce 71
+
+
+state 113
+	mult_expr : mult_expr TOKEN_DIV expo_expr .  (72)
+	expo_expr : expo_expr . TOKEN_EXPONENTIATION unary_expr  (75)
+
+	TOKEN_EXPONENTIATION  shift 66
+	TOKEN_SCOLON  reduce 72
+	TOKEN_GE  reduce 72
+	TOKEN_LE  reduce 72
+	TOKEN_GT  reduce 72
+	TOKEN_LT  reduce 72
+	TOKEN_OR  reduce 72
+	TOKEN_AND  reduce 72
+	TOKEN_EQ  reduce 72
+	TOKEN_NE  reduce 72
+	TOKEN_ADD  reduce 72
+	TOKEN_SUB  reduce 72
+	TOKEN_MULT  reduce 72
+	TOKEN_DIV  reduce 72
+	TOKEN_ASSIGN  reduce 72
+	TOKEN_MOD  reduce 72
+	TOKEN_COMMA  reduce 72
+	TOKEN_CLPAR  reduce 72
+	TOKEN_CLBRAK  reduce 72
+	TOKEN_CLBRACE  reduce 72
+
+
+state 114
+	mult_expr : mult_expr TOKEN_MOD expo_expr .  (73)
+	expo_expr : expo_expr . TOKEN_EXPONENTIATION unary_expr  (75)
+
+	TOKEN_EXPONENTIATION  shift 66
+	TOKEN_SCOLON  reduce 73
+	TOKEN_GE  reduce 73
+	TOKEN_LE  reduce 73
+	TOKEN_GT  reduce 73
+	TOKEN_LT  reduce 73
+	TOKEN_OR  reduce 73
+	TOKEN_AND  reduce 73
+	TOKEN_EQ  reduce 73
+	TOKEN_NE  reduce 73
+	TOKEN_ADD  reduce 73
+	TOKEN_SUB  reduce 73
+	TOKEN_MULT  reduce 73
+	TOKEN_DIV  reduce 73
+	TOKEN_ASSIGN  reduce 73
+	TOKEN_MOD  reduce 73
+	TOKEN_COMMA  reduce 73
+	TOKEN_CLPAR  reduce 73
+	TOKEN_CLBRAK  reduce 73
+	TOKEN_CLBRACE  reduce 73
+
+
+state 115
+	expr : expr TOKEN_ASSIGN or_expr .  (56)
+	or_expr : or_expr . TOKEN_OR and_expr  (57)
+
+	TOKEN_OR  shift 65
+	TOKEN_SCOLON  reduce 56
+	TOKEN_ASSIGN  reduce 56
+	TOKEN_COMMA  reduce 56
+	TOKEN_CLPAR  reduce 56
+	TOKEN_CLBRAK  reduce 56
+	TOKEN_CLBRACE  reduce 56
+
+
+state 116
+	type : TOKEN_ARRAY TOKEN_OPBRAK expr TOKEN_CLBRAK type .  (12)
+
+	.  reduce 12
+
+
+state 117
+	compare_expr : compare_expr TOKEN_GE add_expr .  (61)
+	add_expr : add_expr . TOKEN_ADD mult_expr  (68)
+	add_expr : add_expr . TOKEN_SUB mult_expr  (69)
+
+	TOKEN_ADD  shift 67
+	TOKEN_SUB  shift 68
+	TOKEN_SCOLON  reduce 61
+	TOKEN_GE  reduce 61
+	TOKEN_LE  reduce 61
+	TOKEN_GT  reduce 61
+	TOKEN_LT  reduce 61
+	TOKEN_OR  reduce 61
+	TOKEN_AND  reduce 61
+	TOKEN_EQ  reduce 61
+	TOKEN_NE  reduce 61
+	TOKEN_ASSIGN  reduce 61
+	TOKEN_COMMA  reduce 61
+	TOKEN_CLPAR  reduce 61
+	TOKEN_CLBRAK  reduce 61
+	TOKEN_CLBRACE  reduce 61
+
+
+state 118
+	compare_expr : compare_expr TOKEN_LE add_expr .  (63)
+	add_expr : add_expr . TOKEN_ADD mult_expr  (68)
+	add_expr : add_expr . TOKEN_SUB mult_expr  (69)
+
+	TOKEN_ADD  shift 67
+	TOKEN_SUB  shift 68
+	TOKEN_SCOLON  reduce 63
+	TOKEN_GE  reduce 63
+	TOKEN_LE  reduce 63
+	TOKEN_GT  reduce 63
+	TOKEN_LT  reduce 63
+	TOKEN_OR  reduce 63
+	TOKEN_AND  reduce 63
+	TOKEN_EQ  reduce 63
+	TOKEN_NE  reduce 63
+	TOKEN_ASSIGN  reduce 63
+	TOKEN_COMMA  reduce 63
+	TOKEN_CLPAR  reduce 63
+	TOKEN_CLBRAK  reduce 63
+	TOKEN_CLBRACE  reduce 63
+
+
+state 119
+	compare_expr : compare_expr TOKEN_GT add_expr .  (62)
+	add_expr : add_expr . TOKEN_ADD mult_expr  (68)
+	add_expr : add_expr . TOKEN_SUB mult_expr  (69)
+
+	TOKEN_ADD  shift 67
+	TOKEN_SUB  shift 68
+	TOKEN_SCOLON  reduce 62
+	TOKEN_GE  reduce 62
+	TOKEN_LE  reduce 62
+	TOKEN_GT  reduce 62
+	TOKEN_LT  reduce 62
+	TOKEN_OR  reduce 62
+	TOKEN_AND  reduce 62
+	TOKEN_EQ  reduce 62
+	TOKEN_NE  reduce 62
+	TOKEN_ASSIGN  reduce 62
+	TOKEN_COMMA  reduce 62
+	TOKEN_CLPAR  reduce 62
+	TOKEN_CLBRAK  reduce 62
+	TOKEN_CLBRACE  reduce 62
+
+
+state 120
+	compare_expr : compare_expr TOKEN_LT add_expr .  (64)
+	add_expr : add_expr . TOKEN_ADD mult_expr  (68)
+	add_expr : add_expr . TOKEN_SUB mult_expr  (69)
+
+	TOKEN_ADD  shift 67
+	TOKEN_SUB  shift 68
+	TOKEN_SCOLON  reduce 64
+	TOKEN_GE  reduce 64
+	TOKEN_LE  reduce 64
+	TOKEN_GT  reduce 64
+	TOKEN_LT  reduce 64
+	TOKEN_OR  reduce 64
+	TOKEN_AND  reduce 64
+	TOKEN_EQ  reduce 64
+	TOKEN_NE  reduce 64
+	TOKEN_ASSIGN  reduce 64
+	TOKEN_COMMA  reduce 64
+	TOKEN_CLPAR  reduce 64
+	TOKEN_CLBRAK  reduce 64
+	TOKEN_CLBRACE  reduce 64
+
+
+state 121
+	compare_expr : compare_expr TOKEN_EQ add_expr .  (66)
+	add_expr : add_expr . TOKEN_ADD mult_expr  (68)
+	add_expr : add_expr . TOKEN_SUB mult_expr  (69)
+
+	TOKEN_ADD  shift 67
+	TOKEN_SUB  shift 68
+	TOKEN_SCOLON  reduce 66
+	TOKEN_GE  reduce 66
+	TOKEN_LE  reduce 66
+	TOKEN_GT  reduce 66
+	TOKEN_LT  reduce 66
+	TOKEN_OR  reduce 66
+	TOKEN_AND  reduce 66
+	TOKEN_EQ  reduce 66
+	TOKEN_NE  reduce 66
+	TOKEN_ASSIGN  reduce 66
+	TOKEN_COMMA  reduce 66
+	TOKEN_CLPAR  reduce 66
+	TOKEN_CLBRAK  reduce 66
+	TOKEN_CLBRACE  reduce 66
+
+
+state 122
+	compare_expr : compare_expr TOKEN_NE add_expr .  (65)
+	add_expr : add_expr . TOKEN_ADD mult_expr  (68)
+	add_expr : add_expr . TOKEN_SUB mult_expr  (69)
+
+	TOKEN_ADD  shift 67
+	TOKEN_SUB  shift 68
+	TOKEN_SCOLON  reduce 65
+	TOKEN_GE  reduce 65
+	TOKEN_LE  reduce 65
+	TOKEN_GT  reduce 65
+	TOKEN_LT  reduce 65
+	TOKEN_OR  reduce 65
+	TOKEN_AND  reduce 65
+	TOKEN_EQ  reduce 65
+	TOKEN_NE  reduce 65
+	TOKEN_ASSIGN  reduce 65
+	TOKEN_COMMA  reduce 65
+	TOKEN_CLPAR  reduce 65
+	TOKEN_CLBRAK  reduce 65
+	TOKEN_CLBRACE  reduce 65
+
+
+state 123
+	primary_expr : ident TOKEN_OPPAR expr_list . TOKEN_CLPAR  (87)
+
+	TOKEN_CLPAR  shift 141
+	.  error
+
+
+state 124
+	expr_list : expr_list2 .  (28)
+
+	.  reduce 28
+
+
+state 125
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+	primary_expr : ident TOKEN_OPBRAK expr . TOKEN_CLBRAK array_elements  (86)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_CLBRAK  shift 142
+	.  error
+
+
+state 126
+	type2 : TOKEN_ARRAY TOKEN_OPBRAK op_expr TOKEN_CLBRAK . type2  (19)
+
+	TOKEN_STRING  shift 17
+	TOKEN_INTEGER  shift 18
+	TOKEN_CHAR  shift 19
+	TOKEN_ARRAY  shift 20
+	TOKEN_BOOLEAN  shift 21
+	TOKEN_FUNCTION  shift 22
+	TOKEN_VOID  shift 23
+	.  error
+
+	type2  goto 143
+
+
+state 127
+	type2 : TOKEN_FUNCTION type TOKEN_OPPAR param_list . TOKEN_CLPAR  (20)
+
+	TOKEN_CLPAR  shift 144
+	.  error
+
+
+state 128
+	type : TOKEN_FUNCTION type2 TOKEN_OPPAR param_list TOKEN_CLPAR .  (13)
+
+	.  reduce 13
+
+
+state 129
+	not_empty_param_list : ident TOKEN_COLON . type2  (24)
+	param_list2 : ident TOKEN_COLON . type2 TOKEN_COMMA not_empty_param_list  (26)
+
+	TOKEN_STRING  shift 17
+	TOKEN_INTEGER  shift 18
+	TOKEN_CHAR  shift 19
+	TOKEN_ARRAY  shift 20
+	TOKEN_BOOLEAN  shift 21
+	TOKEN_FUNCTION  shift 22
+	TOKEN_VOID  shift 23
+	.  error
+
+	type2  goto 145
+
+
+state 130
+	stmt : TOKEN_IF TOKEN_OPPAR . expr TOKEN_CLPAR match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF TOKEN_OPPAR . expr TOKEN_CLPAR stmt  (38)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 146
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 131
+	stmt : TOKEN_FOR TOKEN_OPPAR . op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 147
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 132
+	stmt : TOKEN_PRINT expr_list . TOKEN_SCOLON  (40)
+
+	TOKEN_SCOLON  shift 148
+	.  error
+
+
+state 133
+	stmt : TOKEN_RETURN op_expr . TOKEN_SCOLON  (39)
+
+	TOKEN_SCOLON  shift 149
+	.  error
+
+
+state 134
+	stmt : TOKEN_OPBRACE stmt_list . TOKEN_CLBRACE  (36)
+
+	TOKEN_CLBRACE  shift 150
+	.  error
+
+
+state 135
+	stmt_list2 : stmt not_empty_stmt_list .  (52)
+
+	.  reduce 52
+
+
+state 136
+	stmt : expr . TOKEN_SCOLON  (34)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_SCOLON  shift 138
+	TOKEN_ASSIGN  shift 72
+	.  error
+
+
+state 137
+	decl : ident TOKEN_COLON type TOKEN_ASSIGN TOKEN_OPBRACE stmt_list TOKEN_CLBRACE .  (7)
+
+	.  reduce 7
+
+
+state 138
+	stmt : expr TOKEN_SCOLON .  (34)
+
+	.  reduce 34
+
+
+state 139
+	decl : ident TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN expr . TOKEN_SCOLON  (5)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_SCOLON  shift 151
+	TOKEN_ASSIGN  shift 72
+	.  error
+
+
+state 140
+	expr_list2 : expr TOKEN_COMMA expr_list2 .  (30)
+
+	.  reduce 30
+
+
+state 141
+	primary_expr : ident TOKEN_OPPAR expr_list TOKEN_CLPAR .  (87)
+
+	.  reduce 87
+
+
+state 142
+	primary_expr : ident TOKEN_OPBRAK expr TOKEN_CLBRAK . array_elements  (86)
+	array_elements : .  (95)
+
+	TOKEN_OPBRAK  shift 152
+	TOKEN_SCOLON  reduce 95
+	TOKEN_GE  reduce 95
+	TOKEN_LE  reduce 95
+	TOKEN_GT  reduce 95
+	TOKEN_LT  reduce 95
+	TOKEN_OR  reduce 95
+	TOKEN_AND  reduce 95
+	TOKEN_EQ  reduce 95
+	TOKEN_NE  reduce 95
+	TOKEN_INCREMENT  reduce 95
+	TOKEN_DECREMENT  reduce 95
+	TOKEN_ADD  reduce 95
+	TOKEN_SUB  reduce 95
+	TOKEN_MULT  reduce 95
+	TOKEN_DIV  reduce 95
+	TOKEN_ASSIGN  reduce 95
+	TOKEN_EXPONENTIATION  reduce 95
+	TOKEN_MOD  reduce 95
+	TOKEN_COMMA  reduce 95
+	TOKEN_CLPAR  reduce 95
+	TOKEN_CLBRAK  reduce 95
+	TOKEN_CLBRACE  reduce 95
+
+	array_elements  goto 153
+
+
+state 143
+	type2 : TOKEN_ARRAY TOKEN_OPBRAK op_expr TOKEN_CLBRAK type2 .  (19)
+
+	.  reduce 19
+
+
+state 144
+	type2 : TOKEN_FUNCTION type TOKEN_OPPAR param_list TOKEN_CLPAR .  (20)
+
+	.  reduce 20
+
+
+state 145
+	not_empty_param_list : ident TOKEN_COLON type2 .  (24)
+	param_list2 : ident TOKEN_COLON type2 . TOKEN_COMMA not_empty_param_list  (26)
+
+	TOKEN_COMMA  shift 154
+	TOKEN_CLPAR  reduce 24
+
+
+state 146
+	stmt : TOKEN_IF TOKEN_OPPAR expr . TOKEN_CLPAR match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF TOKEN_OPPAR expr . TOKEN_CLPAR stmt  (38)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_CLPAR  shift 155
+	.  error
+
+
+state 147
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr . TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+
+	TOKEN_SCOLON  shift 156
+	.  error
+
+
+state 148
+	stmt : TOKEN_PRINT expr_list TOKEN_SCOLON .  (40)
+
+	.  reduce 40
+
+
+state 149
+	stmt : TOKEN_RETURN op_expr TOKEN_SCOLON .  (39)
+
+	.  reduce 39
+
+
+state 150
+	stmt : TOKEN_OPBRACE stmt_list TOKEN_CLBRACE .  (36)
+
+	.  reduce 36
+
+
+state 151
+	decl : ident TOKEN_COLON TOKEN_ARRAY TOKEN_OPBRAK TOKEN_CLBRAK type2 TOKEN_ASSIGN expr TOKEN_SCOLON .  (5)
+
+	.  reduce 5
+
+
+state 152
+	array_elements : TOKEN_OPBRAK . expr TOKEN_CLBRAK array_elements  (94)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 157
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 153
+	primary_expr : ident TOKEN_OPBRAK expr TOKEN_CLBRAK array_elements .  (86)
+
+	.  reduce 86
+
+
+state 154
+	param_list2 : ident TOKEN_COLON type2 TOKEN_COMMA . not_empty_param_list  (26)
+
+	TOKEN_IDENTIFIER  shift 1
+	.  error
+
+	not_empty_param_list  goto 158
+	param_list2  goto 88
+	ident  goto 89
+
+
+state 155
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR . match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR . stmt  (38)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 159
+	TOKEN_FOR  shift 160
+	TOKEN_PRINT  shift 161
+	TOKEN_RETURN  shift 162
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 163
+	.  error
+
+	decl  goto 164
+	stmt  goto 165
+	match_stmt  goto 166
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 167
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 156
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON . op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 168
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 157
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+	array_elements : TOKEN_OPBRAK expr . TOKEN_CLBRAK array_elements  (94)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_CLBRAK  shift 169
+	.  error
+
+
+state 158
+	param_list2 : ident TOKEN_COLON type2 TOKEN_COMMA not_empty_param_list .  (26)
+
+	.  reduce 26
+
+
+state 159
+	stmt : TOKEN_IF . TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF . TOKEN_OPPAR expr TOKEN_CLPAR stmt  (38)
+	match_stmt : TOKEN_IF . TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE match_stmt  (41)
+
+	TOKEN_OPPAR  shift 170
+	.  error
+
+
+state 160
+	stmt : TOKEN_FOR . TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+	match_stmt : TOKEN_FOR . TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR match_stmt  (47)
+
+	TOKEN_OPPAR  shift 171
+	.  error
+
+
+state 161
+	stmt : TOKEN_PRINT . expr_list TOKEN_SCOLON  (40)
+	match_stmt : TOKEN_PRINT . expr_list TOKEN_SCOLON  (43)
+	expr_list : .  (27)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 27
+
+	expr_list  goto 172
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 59
+	primary_expr  goto 45
+	expr_list2  goto 124
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 162
+	stmt : TOKEN_RETURN . op_expr TOKEN_SCOLON  (39)
+	match_stmt : TOKEN_RETURN . op_expr TOKEN_SCOLON  (42)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 173
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 163
+	stmt : TOKEN_OPBRACE . stmt_list TOKEN_CLBRACE  (36)
+	match_stmt : TOKEN_OPBRACE . stmt_list TOKEN_CLBRACE  (44)
+	primary_expr : TOKEN_OPBRACE . expr_list_array TOKEN_CLBRACE  (93)
+	stmt_list : .  (48)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 90
+	TOKEN_FOR  shift 91
+	TOKEN_PRINT  shift 92
+	TOKEN_RETURN  shift 93
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 94
+	TOKEN_CLBRACE  reduce 48
+
+	decl  goto 95
+	stmt  goto 96
+	stmt_list  goto 174
+	not_empty_stmt_list  goto 98
+	stmt_list2  goto 99
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 100
+	primary_expr  goto 45
+	expr_list2  goto 60
+	expr_list_array  goto 61
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 164
+	stmt : decl .  (33)
+	match_stmt : decl .  (46)
+
+	TOKEN_FALSE  reduce 33
+	TOKEN_IF  reduce 33
+	TOKEN_ELSE  reduce 46
+	TOKEN_FOR  reduce 33
+	TOKEN_PRINT  reduce 33
+	TOKEN_RETURN  reduce 33
+	TOKEN_STRING_LITERAL  reduce 33
+	TOKEN_CHARACTER_LITERAL  reduce 33
+	TOKEN_INTEGER_LITERAL  reduce 33
+	TOKEN_TRUE  reduce 33
+	TOKEN_IDENTIFIER  reduce 33
+	TOKEN_NOT  reduce 33
+	TOKEN_SUB  reduce 33
+	TOKEN_OPPAR  reduce 33
+	TOKEN_OPBRACE  reduce 33
+	TOKEN_CLBRACE  reduce 33
+
+
+state 165
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR stmt .  (38)
+
+	.  reduce 38
+
+
+state 166
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt . TOKEN_ELSE stmt  (37)
+
+	TOKEN_ELSE  shift 175
+	.  error
+
+
+state 167
+	stmt : expr . TOKEN_SCOLON  (34)
+	match_stmt : expr . TOKEN_SCOLON  (45)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_SCOLON  shift 176
+	TOKEN_ASSIGN  shift 72
+	.  error
+
+
+state 168
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr . TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+
+	TOKEN_SCOLON  shift 177
+	.  error
+
+
+state 169
+	array_elements : TOKEN_OPBRAK expr TOKEN_CLBRAK . array_elements  (94)
+	array_elements : .  (95)
+
+	TOKEN_OPBRAK  shift 152
+	TOKEN_SCOLON  reduce 95
+	TOKEN_GE  reduce 95
+	TOKEN_LE  reduce 95
+	TOKEN_GT  reduce 95
+	TOKEN_LT  reduce 95
+	TOKEN_OR  reduce 95
+	TOKEN_AND  reduce 95
+	TOKEN_EQ  reduce 95
+	TOKEN_NE  reduce 95
+	TOKEN_INCREMENT  reduce 95
+	TOKEN_DECREMENT  reduce 95
+	TOKEN_ADD  reduce 95
+	TOKEN_SUB  reduce 95
+	TOKEN_MULT  reduce 95
+	TOKEN_DIV  reduce 95
+	TOKEN_ASSIGN  reduce 95
+	TOKEN_EXPONENTIATION  reduce 95
+	TOKEN_MOD  reduce 95
+	TOKEN_COMMA  reduce 95
+	TOKEN_CLPAR  reduce 95
+	TOKEN_CLBRAK  reduce 95
+	TOKEN_CLBRACE  reduce 95
+
+	array_elements  goto 178
+
+
+state 170
+	stmt : TOKEN_IF TOKEN_OPPAR . expr TOKEN_CLPAR match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF TOKEN_OPPAR . expr TOKEN_CLPAR stmt  (38)
+	match_stmt : TOKEN_IF TOKEN_OPPAR . expr TOKEN_CLPAR match_stmt TOKEN_ELSE match_stmt  (41)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	.  error
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 179
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 171
+	stmt : TOKEN_FOR TOKEN_OPPAR . op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+	match_stmt : TOKEN_FOR TOKEN_OPPAR . op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR match_stmt  (47)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 180
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 172
+	stmt : TOKEN_PRINT expr_list . TOKEN_SCOLON  (40)
+	match_stmt : TOKEN_PRINT expr_list . TOKEN_SCOLON  (43)
+
+	TOKEN_SCOLON  shift 181
+	.  error
+
+
+state 173
+	stmt : TOKEN_RETURN op_expr . TOKEN_SCOLON  (39)
+	match_stmt : TOKEN_RETURN op_expr . TOKEN_SCOLON  (42)
+
+	TOKEN_SCOLON  shift 182
+	.  error
+
+
+state 174
+	stmt : TOKEN_OPBRACE stmt_list . TOKEN_CLBRACE  (36)
+	match_stmt : TOKEN_OPBRACE stmt_list . TOKEN_CLBRACE  (44)
+
+	TOKEN_CLBRACE  shift 183
+	.  error
+
+
+state 175
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE . stmt  (37)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 90
+	TOKEN_FOR  shift 91
+	TOKEN_PRINT  shift 92
+	TOKEN_RETURN  shift 93
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 94
+	.  error
+
+	decl  goto 95
+	stmt  goto 184
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 136
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 176
+	stmt : expr TOKEN_SCOLON .  (34)
+	match_stmt : expr TOKEN_SCOLON .  (45)
+
+	TOKEN_FALSE  reduce 34
+	TOKEN_IF  reduce 34
+	TOKEN_ELSE  reduce 45
+	TOKEN_FOR  reduce 34
+	TOKEN_PRINT  reduce 34
+	TOKEN_RETURN  reduce 34
+	TOKEN_STRING_LITERAL  reduce 34
+	TOKEN_CHARACTER_LITERAL  reduce 34
+	TOKEN_INTEGER_LITERAL  reduce 34
+	TOKEN_TRUE  reduce 34
+	TOKEN_IDENTIFIER  reduce 34
+	TOKEN_NOT  reduce 34
+	TOKEN_SUB  reduce 34
+	TOKEN_OPPAR  reduce 34
+	TOKEN_OPBRACE  reduce 34
+	TOKEN_CLBRACE  reduce 34
+
+
+state 177
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON . op_expr TOKEN_CLPAR stmt  (35)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_CLPAR  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 185
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 178
+	array_elements : TOKEN_OPBRAK expr TOKEN_CLBRAK array_elements .  (94)
+
+	.  reduce 94
+
+
+state 179
+	stmt : TOKEN_IF TOKEN_OPPAR expr . TOKEN_CLPAR match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF TOKEN_OPPAR expr . TOKEN_CLPAR stmt  (38)
+	match_stmt : TOKEN_IF TOKEN_OPPAR expr . TOKEN_CLPAR match_stmt TOKEN_ELSE match_stmt  (41)
+	expr : expr . TOKEN_ASSIGN or_expr  (56)
+
+	TOKEN_ASSIGN  shift 72
+	TOKEN_CLPAR  shift 186
+	.  error
+
+
+state 180
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr . TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+	match_stmt : TOKEN_FOR TOKEN_OPPAR op_expr . TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR match_stmt  (47)
+
+	TOKEN_SCOLON  shift 187
+	.  error
+
+
+state 181
+	stmt : TOKEN_PRINT expr_list TOKEN_SCOLON .  (40)
+	match_stmt : TOKEN_PRINT expr_list TOKEN_SCOLON .  (43)
+
+	TOKEN_FALSE  reduce 40
+	TOKEN_IF  reduce 40
+	TOKEN_ELSE  reduce 43
+	TOKEN_FOR  reduce 40
+	TOKEN_PRINT  reduce 40
+	TOKEN_RETURN  reduce 40
+	TOKEN_STRING_LITERAL  reduce 40
+	TOKEN_CHARACTER_LITERAL  reduce 40
+	TOKEN_INTEGER_LITERAL  reduce 40
+	TOKEN_TRUE  reduce 40
+	TOKEN_IDENTIFIER  reduce 40
+	TOKEN_NOT  reduce 40
+	TOKEN_SUB  reduce 40
+	TOKEN_OPPAR  reduce 40
+	TOKEN_OPBRACE  reduce 40
+	TOKEN_CLBRACE  reduce 40
+
+
+state 182
+	stmt : TOKEN_RETURN op_expr TOKEN_SCOLON .  (39)
+	match_stmt : TOKEN_RETURN op_expr TOKEN_SCOLON .  (42)
+
+	TOKEN_FALSE  reduce 39
+	TOKEN_IF  reduce 39
+	TOKEN_ELSE  reduce 42
+	TOKEN_FOR  reduce 39
+	TOKEN_PRINT  reduce 39
+	TOKEN_RETURN  reduce 39
+	TOKEN_STRING_LITERAL  reduce 39
+	TOKEN_CHARACTER_LITERAL  reduce 39
+	TOKEN_INTEGER_LITERAL  reduce 39
+	TOKEN_TRUE  reduce 39
+	TOKEN_IDENTIFIER  reduce 39
+	TOKEN_NOT  reduce 39
+	TOKEN_SUB  reduce 39
+	TOKEN_OPPAR  reduce 39
+	TOKEN_OPBRACE  reduce 39
+	TOKEN_CLBRACE  reduce 39
+
+
+state 183
+	stmt : TOKEN_OPBRACE stmt_list TOKEN_CLBRACE .  (36)
+	match_stmt : TOKEN_OPBRACE stmt_list TOKEN_CLBRACE .  (44)
+
+	TOKEN_FALSE  reduce 36
+	TOKEN_IF  reduce 36
+	TOKEN_ELSE  reduce 44
+	TOKEN_FOR  reduce 36
+	TOKEN_PRINT  reduce 36
+	TOKEN_RETURN  reduce 36
+	TOKEN_STRING_LITERAL  reduce 36
+	TOKEN_CHARACTER_LITERAL  reduce 36
+	TOKEN_INTEGER_LITERAL  reduce 36
+	TOKEN_TRUE  reduce 36
+	TOKEN_IDENTIFIER  reduce 36
+	TOKEN_NOT  reduce 36
+	TOKEN_SUB  reduce 36
+	TOKEN_OPPAR  reduce 36
+	TOKEN_OPBRACE  reduce 36
+	TOKEN_CLBRACE  reduce 36
+
+
+state 184
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE stmt .  (37)
+
+	.  reduce 37
+
+
+state 185
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr . TOKEN_CLPAR stmt  (35)
+
+	TOKEN_CLPAR  shift 188
+	.  error
+
+
+state 186
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR . match_stmt TOKEN_ELSE stmt  (37)
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR . stmt  (38)
+	match_stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR . match_stmt TOKEN_ELSE match_stmt  (41)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 159
+	TOKEN_FOR  shift 160
+	TOKEN_PRINT  shift 161
+	TOKEN_RETURN  shift 162
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 163
+	.  error
+
+	decl  goto 164
+	stmt  goto 165
+	match_stmt  goto 189
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 167
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 187
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON . op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+	match_stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON . op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR match_stmt  (47)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_SCOLON  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 190
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 188
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR . stmt  (35)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 90
+	TOKEN_FOR  shift 91
+	TOKEN_PRINT  shift 92
+	TOKEN_RETURN  shift 93
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 94
+	.  error
+
+	decl  goto 95
+	stmt  goto 191
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 136
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 189
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt . TOKEN_ELSE stmt  (37)
+	match_stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt . TOKEN_ELSE match_stmt  (41)
+
+	TOKEN_ELSE  shift 192
+	.  error
+
+
+state 190
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr . TOKEN_SCOLON op_expr TOKEN_CLPAR stmt  (35)
+	match_stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr . TOKEN_SCOLON op_expr TOKEN_CLPAR match_stmt  (47)
+
+	TOKEN_SCOLON  shift 193
+	.  error
+
+
+state 191
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR stmt .  (35)
+
+	.  reduce 35
+
+
+state 192
+	stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE . stmt  (37)
+	match_stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE . match_stmt  (41)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 159
+	TOKEN_FOR  shift 160
+	TOKEN_PRINT  shift 161
+	TOKEN_RETURN  shift 162
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 163
+	.  error
+
+	decl  goto 164
+	stmt  goto 184
+	match_stmt  goto 194
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 167
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 193
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON . op_expr TOKEN_CLPAR stmt  (35)
+	match_stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON . op_expr TOKEN_CLPAR match_stmt  (47)
+	op_expr : .  (53)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 36
+	TOKEN_CLPAR  reduce 53
+
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 82
+	primary_expr  goto 45
+	op_expr  goto 195
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 48
+
+
+state 194
+	match_stmt : TOKEN_IF TOKEN_OPPAR expr TOKEN_CLPAR match_stmt TOKEN_ELSE match_stmt .  (41)
+
+	.  reduce 41
+
+
+state 195
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr . TOKEN_CLPAR stmt  (35)
+	match_stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr . TOKEN_CLPAR match_stmt  (47)
+
+	TOKEN_CLPAR  shift 196
+	.  error
+
+
+state 196
+	stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR . stmt  (35)
+	match_stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR . match_stmt  (47)
+
+	TOKEN_FALSE  shift 27
+	TOKEN_IF  shift 159
+	TOKEN_FOR  shift 160
+	TOKEN_PRINT  shift 161
+	TOKEN_RETURN  shift 162
+	TOKEN_STRING_LITERAL  shift 28
+	TOKEN_CHARACTER_LITERAL  shift 29
+	TOKEN_INTEGER_LITERAL  shift 30
+	TOKEN_TRUE  shift 31
+	TOKEN_IDENTIFIER  shift 1
+	TOKEN_NOT  shift 32
+	TOKEN_SUB  shift 33
+	TOKEN_OPPAR  shift 34
+	TOKEN_OPBRACE  shift 163
+	.  error
+
+	decl  goto 164
+	stmt  goto 191
+	match_stmt  goto 197
+	paren  goto 37
+	and_expr  goto 38
+	or_expr  goto 39
+	unary_expr  goto 40
+	expo_expr  goto 41
+	add_expr  goto 42
+	mult_expr  goto 43
+	expr  goto 167
+	primary_expr  goto 45
+	compare_expr  goto 46
+	inc_expr  goto 47
+	ident  goto 101
+
+
+state 197
+	match_stmt : TOKEN_FOR TOKEN_OPPAR op_expr TOKEN_SCOLON op_expr TOKEN_SCOLON op_expr TOKEN_CLPAR match_stmt .  (47)
+
+	.  reduce 47
+
+
+51 terminals, 31 nonterminals
+96 grammar rules, 198 states

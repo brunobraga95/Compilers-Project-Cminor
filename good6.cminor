@@ -1,0 +1,9 @@
+bigger: function boolean(x:integer,y:integer)={
+	if(x>=y)return true;
+	else return false;
+}
+main:function void()={
+	x:integer = 2;
+	y:integer = 3;	
+	print !bigger(x,y);
+}

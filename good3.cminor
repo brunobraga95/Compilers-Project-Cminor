@@ -1,0 +1,11 @@
+
+get_bigger:function integer(x:integer,y:integer) ={
+	if(x>y)return x;
+	else return y;
+}
+t:function integer(x:integer)={return x;}
+main: function integer () =
+{
+	if(get_bigger(3,t(2^2)) == 4)print 4," It is right\n";
+	else print  get_bigger(3,t(2^2))," wrong, this program should not print this number\n"; 
+}

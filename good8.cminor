@@ -1,0 +1,8 @@
+x:integer = 99;
+main: function void() = {
+	for(;;){
+		print x,"\n";
+		x--;
+		if(x == 0)return;
+	}
+}

@@ -1,0 +1,6 @@
+main:function integer()={
+	x:integer = 2;
+	y:integer = 2;	
+	print (((1%1/1%1*1%1/1%1+2(((1%1)/(1%1))*(((1%1)/(1%1));
+
+}

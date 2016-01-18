@@ -1,0 +1,9 @@
+main:function integer()={
+	x:integer;
+	for(x = -10;x>0;x++){
+		if(x%5 == 0)print "5 divisible\n";
+		else print x;
+	}
+	print "wont use for statement\n";
+
+}

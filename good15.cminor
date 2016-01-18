@@ -1,0 +1,27 @@
+main:function integer() = {
+	x:integer = -1;
+	y:integer = -1;
+	w:integer = 2;
+	if(x > y)print "wrong\n";
+	else print "right\n";
+	
+	if(x<=y)print "right\n";
+	else print "wrong\n";
+	
+	if(x == y)print "right\n";
+	else print "wrong\n";		
+	
+	if(x>=y)print "right\n";
+	else print "wrong\n";
+
+	if(-(x+y) == w)print "right\n";
+	else print "wrong\n";
+
+	if(w > y)print "right\n";
+	else print "wrong\n";
+
+	if(w < y)print "wrong\n";
+	else print "right\n";
+
+
+}

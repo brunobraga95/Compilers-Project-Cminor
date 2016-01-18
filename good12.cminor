@@ -1,0 +1,7 @@
+c:function integer(x:integer)={
+	if(x == 0)return 0;
+	return x+c(x-1);
+}
+main:function void() = {
+	print c(10);
+}

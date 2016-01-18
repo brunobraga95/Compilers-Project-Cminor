@@ -1,0 +1,18 @@
+test:function integer(x:integer);
+test2:function integer(x:integer);
+test3:function integer(x:integer,y:integer);
+main:function void()={
+	print test(test3(test2(3),2));
+}
+test:function integer(x:integer)={
+	//print x,"\n";
+	return x*x;
+}
+test2:function integer(x:integer)={
+	//print x,"\n";
+	return x*x;
+}
+test3:function integer(x:integer,y:integer)={
+	//print x,"\n";
+	return x*y;
+}

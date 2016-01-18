@@ -1,0 +1,11 @@
+teste: function boolean(w:integer) = {
+	return w < 89;
+}
+
+main: function boolean() = {
+	u:integer = 1;
+	b:boolean;
+	b =  !teste(u);
+	print b;
+	return b;
+}

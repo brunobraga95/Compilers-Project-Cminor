@@ -1,0 +1,13 @@
+main:function void() = {
+	x:integer = 0;
+	y:boolean = false;
+	for(x = 100;x>=0;x--){
+		print x,"\n";
+		if(x == 0){
+			if(y)return;
+			x = 50;
+			y = true;
+		}
+	}
+
+}

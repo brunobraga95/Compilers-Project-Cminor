@@ -1,0 +1,6 @@
+main:function integer()={
+	x:integer = 46*31;
+	y:integer = x/31;
+	print y;
+
+}

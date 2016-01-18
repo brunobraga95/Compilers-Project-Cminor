@@ -1,0 +1,17 @@
+x:integer = 10;
+main: function integer()={
+	if(x > 0){
+		if(x > 20)
+		{
+			
+		}
+		else{
+			if((1000/10/10)^2/10 == x)print("here\n");
+		}
+	}else
+	{
+		x = 12;
+		if(x%3 == 0)print "this program maskes no sense\n";
+		else print "dont care, it is not supposed to make\n";
+	}
+}

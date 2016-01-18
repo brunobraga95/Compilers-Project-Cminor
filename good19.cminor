@@ -1,0 +1,16 @@
+str:string = "bruno\n";
+str2:string = "braga\n";
+main: function void ( x: integer ) =
+{
+	x:integer;
+	w:integer;
+	z:integer;
+	b:integer = 10;
+	x = w = z = b;
+	print x,"\n";
+	h:string = "teste\n";
+	print str;
+	print h;	
+	h = str;
+	print h;
+}
